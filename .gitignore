@@ -1,0 +1,5 @@
+build/
+.sui/
+.env
+.DS_Store
+.vscode/
