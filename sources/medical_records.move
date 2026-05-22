@@ -146,7 +146,7 @@ module medchain::medical_records {
         record_type: String,
         fee_paid: u64,
         clock: &Clock,
-        ctx: &mut TxContext,
+        _ctx: &mut TxContext,
     ) {
         // --- Validations ---
         assert!(!table::contains(&registry.records, record_id), E_DUPLICATE_RECORD_ID);
