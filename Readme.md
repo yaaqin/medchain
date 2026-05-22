@@ -780,37 +780,38 @@ sui client publish --gas-budget 1000000000
 
 ## ✅ Deployed — Sui Testnet
 
-**Transaction Digest:** `J1kY8v1iq3wCrgJRKCubvVQJfbbeQuHKqeN3b5b85cN3`
-**Deployed By:** `0xb95e07406a27e0cc8e2f5da4b31dcc7aa01003c4155b9760980970f66a795756`
-**Epoch:** 1107
-**Gas Used:** 150,697,880 MIST (~0.15 SUI)
+**Transaction Digest:** `C3TQbZApBkYLZc2FXn6FR6YYBnzmkxCAmL6JhBgWpqMm`  
+**Deployed By:** `0xb95e07406a27e0cc8e2f5da4b31dcc7aa01003c4155b9760980970f66a795756`  
+**Epoch:** 1107  
+**Gas Used:** 165,282,520 MIST (~0.165 SUI)
 
 ### Package
 
 | | ID |
 |---|---|
-| **Package ID** | `0x7ea2746330fc5b6457a6f8fd70ace9d81c4db7ba6079c6df4aed309906bd7da8` |
+| **Package ID** | `0xae9dad95555d2ed4410d4e3721ac3e332211f0ed52e70d0985a0af98a2e9e916` |
 
 ### Shared Objects (accessible by all)
 
 | Object | ID |
 |---|---|
-| `PatientRegistry` | `0x0c4e045ccf356e6ce8b5f8bcf86d197132a6779b8cb7d4945843d90e9898b851` |
-| `EBGRegistry` | `0x3623c59e84d65ef4d9f91c1a76b877d3b55d3cff7abde20d54beba4851a451fc` |
-| `FeeConfig` | `0xa3c8de12cf5526a1a739cca0fad287e68aac7c39868e51278e71f1cf0a467d19` |
-| `RecordRegistry` | `0xb78de078004318bdccd0776d6ca7933365a527b040264c7aba3496b750dcbe12` |
-| `DoctorRegistry` | `0xeeaab757f02b18b8fc0e1e7211aee676a9ca81391457a9802325d975f627353c` |
+| `PatientRegistry` | `0x0ea770c3e185829bbedaa860f48c0a593545162a5624caf3fee1e1b564a23d77` |
+| `RecordRegistry` | `0x0d4cc02965725389edc97a926616a914acc360b966c25e6d845efc4c23ce6cae` |
+| `EBGRegistry` | `0x9f1a9efb97e31070fd58f16c9476c2430740440475080a20bb549f192837e593` |
+| `FeeConfig` | `0xb082977f166a0b6ee80b97ab5dba5502e2c82b6b020ef215b3e8844ed21ebe8c` |
+| `Treasury` | `0xb48c0939362158bc191a0f7a0e992f34c48ad270a613dbede6ebba6030be31f3` |
+| `DoctorRegistry` | `0xcca60c5cbd83adb6d7afafd50f61c04e7f6751611aa7ac4cfd78a66b8d7b908d` |
 
 ### Capability Objects (held by deployer wallet)
 
 | Object | ID |
 |---|---|
-| `RecordAdminCap` | `0x3277b935ffe0557728bf225808a36b5f8dfe9eb029d3dc37a395aa2b96a8f2ed` |
-| `FeeAdminCap` | `0x44969b7ecef28cc471ab0f472b6bc5c6cd090557abe67b34e4c3d210461d9f60` |
-| `DoctorAdminCap` | `0x58949722f40e10b7226d36e141ab035698bf7e10f0fa0c366c244f04a3dc268e` |
-| `AdminCap` (patient_registry) | `0x648c1e92122a51f3a8dd4f19f676fb117a2ef91352a3ba4db55227995b3d32ee` |
-| `EBGAdminCap` | `0xf693c80c8005a9137e9162ae3a43f575aa089ceeff5f160f2b0069fd9928c00b` |
-| `UpgradeCap` | `0xc3aba22e56a75c584bb69afde557c3ae45297d13522fc6bdccbc7bdd8ccf7cf8` |
+| `FeeAdminCap` | `0x61cc91acaf75800b4575f19d4131c565fa04502eb07a2bb140c7664d3d34fbb9` |
+| `AdminCap` (patient_registry) | `0x896c6992ddff14e0db5bf69ffe3af893849f668c29b5bcb12f8ad7d01a828300` |
+| `RecordAdminCap` | `0x9601846e03e75bcb3b0a31171572af7758ceb60b2b750b6f46a496d5d5b9f22b` |
+| `EBGAdminCap` | `0xa2417b78c1406057d54beff4f219b9ccd910850b53b5a3dae7fbc29b4c452816` |
+| `DoctorAdminCap` | `0xf754c36a5ab3aada565e6d47b32b7621e2954176a07e8ee00d152130257ae92b` |
+| `UpgradeCap` | `0x6de6675efcfeb5775fceab5ec7bebe5cafd91b7b0155cee9f3cbb65a46c6a65a` |
 
 > **UpgradeCap** — simpan baik-baik. Ini yang dipakai untuk upgrade package di masa depan.
 
@@ -818,24 +819,25 @@ sui client publish --gas-budget 1000000000
 
 ```env
 SUI_NETWORK=testnet
-SUI_PACKAGE_ID=0x7ea2746330fc5b6457a6f8fd70ace9d81c4db7ba6079c6df4aed309906bd7da8
+SUI_PACKAGE_ID=0xae9dad95555d2ed4410d4e3721ac3e332211f0ed52e70d0985a0af98a2e9e916
 
 # Shared Objects
-PATIENT_REGISTRY_ID=0x0c4e045ccf356e6ce8b5f8bcf86d197132a6779b8cb7d4945843d90e9898b851
-FEE_CONFIG_ID=0xa3c8de12cf5526a1a739cca0fad287e68aac7c39868e51278e71f1cf0a467d19
-RECORD_REGISTRY_ID=0xb78de078004318bdccd0776d6ca7933365a527b040264c7aba3496b750dcbe12
-DOCTOR_REGISTRY_ID=0xeeaab757f02b18b8fc0e1e7211aee676a9ca81391457a9802325d975f627353c
-EBG_REGISTRY_ID=0x3623c59e84d65ef4d9f91c1a76b877d3b55d3cff7abde20d54beba4851a451fc
+PATIENT_REGISTRY_ID=0x0ea770c3e185829bbedaa860f48c0a593545162a5624caf3fee1e1b564a23d77
+RECORD_REGISTRY_ID=0x0d4cc02965725389edc97a926616a914acc360b966c25e6d845efc4c23ce6cae
+EBG_REGISTRY_ID=0x9f1a9efb97e31070fd58f16c9476c2430740440475080a20bb549f192837e593
+FEE_CONFIG_ID=0xb082977f166a0b6ee80b97ab5dba5502e2c82b6b020ef215b3e8844ed21ebe8c
+TREASURY_ID=0xb48c0939362158bc191a0f7a0e992f34c48ad270a613dbede6ebba6030be31f3
+DOCTOR_REGISTRY_ID=0xcca60c5cbd83adb6d7afafd50f61c04e7f6751611aa7ac4cfd78a66b8d7b908d
 
 # Admin Caps (deployer wallet only)
-PATIENT_ADMIN_CAP_ID=0x648c1e92122a51f3a8dd4f19f676fb117a2ef91352a3ba4db55227995b3d32ee
-FEE_ADMIN_CAP_ID=0x44969b7ecef28cc471ab0f472b6bc5c6cd090557abe67b34e4c3d210461d9f60
-RECORD_ADMIN_CAP_ID=0x3277b935ffe0557728bf225808a36b5f8dfe9eb029d3dc37a395aa2b96a8f2ed
-DOCTOR_ADMIN_CAP_ID=0x58949722f40e10b7226d36e141ab035698bf7e10f0fa0c366c244f04a3dc268e
-EBG_ADMIN_CAP_ID=0xf693c80c8005a9137e9162ae3a43f575aa089ceeff5f160f2b0069fd9928c00b
+FEE_ADMIN_CAP_ID=0x61cc91acaf75800b4575f19d4131c565fa04502eb07a2bb140c7664d3d34fbb9
+PATIENT_ADMIN_CAP_ID=0x896c6992ddff14e0db5bf69ffe3af893849f668c29b5bcb12f8ad7d01a828300
+RECORD_ADMIN_CAP_ID=0x9601846e03e75bcb3b0a31171572af7758ceb60b2b750b6f46a496d5d5b9f22b
+EBG_ADMIN_CAP_ID=0xa2417b78c1406057d54beff4f219b9ccd910850b53b5a3dae7fbc29b4c452816
+DOCTOR_ADMIN_CAP_ID=0xf754c36a5ab3aada565e6d47b32b7621e2954176a07e8ee00d152130257ae92b
 ```
 
-Verify on explorer: https://testnet.suivision.xyz/txblock/J1kY8v1iq3wCrgJRKCubvVQJfbbeQuHKqeN3b5b85cN3
+Verify on explorer: https://testnet.suivision.xyz/txblock/C3TQbZApBkYLZc2FXn6FR6YYBnzmkxCAmL6JhBgWpqMm
 
 ---
 
