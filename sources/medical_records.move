@@ -2,23 +2,17 @@
 ///
 /// Handles creation, storage, and querying of medical records on Sui blockchain.
 /// Actual medical data is encrypted off-chain (IPFS) — only metadata lives here.
-///
-/// Key design decisions:
-/// - Records linked to patients via nik_hash (no direct patient_id coupling)
-/// - IPFS hash stored on-chain for data retrieval
-/// - data_hash stored for integrity verification (detect tampering)
-/// - Access logs written on every cross-hospital read (immutable audit trail)
-/// - Fee charged at record creation time via fee_manager
-/// - Records are immutable once created (append-only)
+/// Fee payment in SGT is collected into Treasury on every record creation.
 module medchain::medical_records {
 
-    // ===== Imports =====
     use sui::table::{Self, Table};
     use sui::clock::{Self, Clock};
     use sui::event;
+    use sui::coin::Coin;
     use std::string::{Self, String};
+    use sgt::sgt::SGT;
     use medchain::patient_registry::{Self, PatientRegistry};
-    use medchain::fee_manager::{Self, FeeConfig};
+    use medchain::fee_manager::{Self, FeeConfig, Treasury};
 
     // ===== Error Codes =====
     const E_RECORD_NOT_FOUND:       u64 = 3001;
@@ -27,7 +21,6 @@ module medchain::medical_records {
     const E_INVALID_IPFS_REF:       u64 = 3004;
     const E_INVALID_DATA_HASH:      u64 = 3005;
     const E_INVALID_HOSPITAL_ID:    u64 = 3006;
-    const E_INSUFFICIENT_FEE:       u64 = 3007;
     const E_RECORD_ALREADY_REVOKED: u64 = 3008;
 
     // ===== Constants =====
@@ -40,7 +33,6 @@ module medchain::medical_records {
         id: UID,
     }
 
-    /// Shared registry of all medical records.
     public struct RecordRegistry has key {
         id: UID,
         records: Table<String, MedicalRecord>,
@@ -52,8 +44,6 @@ module medchain::medical_records {
         created_at: u64,
     }
 
-    /// On-chain metadata for one medical record.
-    /// Actual medical data is encrypted and stored on IPFS.
     public struct MedicalRecord has store {
         record_id: String,
         patient_nik_hash: String,
@@ -62,14 +52,13 @@ module medchain::medical_records {
         ipfs_ref: String,
         data_hash: String,
         record_type: String,
-        fee_charged: u64,
+        fee_charged: u64,       // base SGT units actually paid
         created_at: u64,
         status: u8,
         revoked_at: u64,
         revoke_reason: String,
     }
 
-    /// Immutable log entry for every cross-hospital data access.
     public struct AccessLog has store {
         access_id: String,
         patient_nik_hash: String,
@@ -132,11 +121,18 @@ module medchain::medical_records {
     // ===== Public Functions =====
 
     /// Create a new medical record.
-    /// Called by hospital backend after encrypting data and uploading to IPFS.
+    /// Caller must pass a Coin<SGT> with value >= required fee.
+    /// Exact fee is collected into Treasury, remainder returned to caller.
+    ///
+    /// PTB flow (NestJS / Sui Explorer):
+    ///   1. splitCoins(sgt_coin, [fee_amount])
+    ///   2. create_record(..., split_coin)
+    ///   3. transferObjects([remainder], sender)  ← if any overpayment
     public fun create_record(
         registry: &mut RecordRegistry,
         patient_registry: &PatientRegistry,
         fee_config: &FeeConfig,
+        treasury: &mut Treasury,
         record_id: String,
         patient_nik_hash: String,
         hospital_id: String,
@@ -144,9 +140,9 @@ module medchain::medical_records {
         ipfs_ref: String,
         data_hash: String,
         record_type: String,
-        fee_paid: u64,
+        payment: Coin<SGT>,     // actual SGT payment — collected into treasury
         clock: &Clock,
-        _ctx: &mut TxContext,
+        ctx: &mut TxContext,
     ) {
         // --- Validations ---
         assert!(!table::contains(&registry.records, record_id), E_DUPLICATE_RECORD_ID);
@@ -155,9 +151,12 @@ module medchain::medical_records {
         assert!(string::length(&data_hash) > 0, E_INVALID_DATA_HASH);
         assert!(string::length(&hospital_id) > 0, E_INVALID_HOSPITAL_ID);
 
-        // --- Fee check ---
-        let required_fee = fee_manager::calculate_record_fee(fee_config);
-        assert!(fee_paid >= required_fee, E_INSUFFICIENT_FEE);
+        // --- Collect fee into treasury, get remainder back ---
+        let fee_charged = fee_manager::calculate_record_fee(fee_config);
+        let remainder = fee_manager::collect_record_fee(treasury, fee_config, payment, clock, ctx);
+
+        // Return remainder to caller (handles overpayment cleanly)
+        transfer::public_transfer(remainder, ctx.sender());
 
         let now = clock::timestamp_ms(clock);
 
@@ -181,7 +180,6 @@ module medchain::medical_records {
 
         registry.total_records = registry.total_records + 1;
 
-        // --- Event ---
         event::emit(RecordCreated {
             record_id,
             patient_nik_hash,
@@ -189,11 +187,10 @@ module medchain::medical_records {
             doctor_id,
             ipfs_ref,
             record_type,
-            fee_charged: fee_paid,
+            fee_charged,
             timestamp: now,
         });
 
-        // --- Store ---
         table::add(&mut registry.records, record_id, MedicalRecord {
             record_id,
             patient_nik_hash,
@@ -202,7 +199,7 @@ module medchain::medical_records {
             ipfs_ref,
             data_hash,
             record_type,
-            fee_charged: fee_paid,
+            fee_charged,
             created_at: now,
             status: STATUS_ACTIVE,
             revoked_at: 0,
@@ -280,13 +277,8 @@ module medchain::medical_records {
         table::contains(&registry.records, *record_id)
     }
 
-    public fun total_records(registry: &RecordRegistry): u64 {
-        registry.total_records
-    }
-
-    public fun total_accesses(registry: &RecordRegistry): u64 {
-        registry.total_accesses
-    }
+    public fun total_records(registry: &RecordRegistry): u64 { registry.total_records }
+    public fun total_accesses(registry: &RecordRegistry): u64 { registry.total_accesses }
 
     public fun patient_record_count(registry: &RecordRegistry, nik_hash: &String): u64 {
         if (!table::contains(&registry.patient_records, *nik_hash)) { return 0 };
@@ -332,13 +324,11 @@ module medchain::medical_records {
         table::borrow(&registry.records, *record_id).fee_charged
     }
 
-    public fun status_active(): u8 { STATUS_ACTIVE }
+    public fun status_active(): u8  { STATUS_ACTIVE }
     public fun status_revoked(): u8 { STATUS_REVOKED }
 
     // ===== Test-only =====
 
     #[test_only]
-    public fun init_for_testing(ctx: &mut TxContext) {
-        init(ctx)
-    }
+    public fun init_for_testing(ctx: &mut TxContext) { init(ctx) }
 }

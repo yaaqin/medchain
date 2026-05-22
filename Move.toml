@@ -8,6 +8,8 @@ Sui = { git = "https://github.com/MystenLabs/sui.git", subdir = "crates/sui-fram
 
 [addresses]
 medchain = "0x0"
+sgt = "0x831d1156089ec1caeb5ee8f5a3ea309bbed417da778dc9bc800e76c7ebc7488b"
 
 [dev-addresses]
 medchain = "0x0"
+sgt = "0x831d1156089ec1caeb5ee8f5a3ea309bbed417da778dc9bc800e76c7ebc7488b"
