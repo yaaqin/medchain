@@ -773,27 +773,69 @@ sui client gas
 sui move build
 
 # 3. Deploy
-sui client publish --gas-budget 100000000
-
-# Output will include:
-# Package ID:           0x<package_id>
-# PatientRegistry ID:   0x<object_id>
-# FeeConfig ID:         0x<object_id>
-# RecordRegistry ID:    0x<object_id>
-# DoctorRegistry ID:    0x<object_id>
-# EBGRegistry ID:       0x<object_id>
-# AdminCap IDs:         0x<object_id> (one per module)
+sui client publish --gas-budget 1000000000
 ```
 
-Store all Object IDs in your NestJS `.env`:
+---
+
+## ✅ Deployed — Sui Testnet
+
+**Transaction Digest:** `J1kY8v1iq3wCrgJRKCubvVQJfbbeQuHKqeN3b5b85cN3`
+**Deployed By:** `0xb95e07406a27e0cc8e2f5da4b31dcc7aa01003c4155b9760980970f66a795756`
+**Epoch:** 1107
+**Gas Used:** 150,697,880 MIST (~0.15 SUI)
+
+### Package
+
+| | ID |
+|---|---|
+| **Package ID** | `0x7ea2746330fc5b6457a6f8fd70ace9d81c4db7ba6079c6df4aed309906bd7da8` |
+
+### Shared Objects (accessible by all)
+
+| Object | ID |
+|---|---|
+| `PatientRegistry` | `0x0c4e045ccf356e6ce8b5f8bcf86d197132a6779b8cb7d4945843d90e9898b851` |
+| `EBGRegistry` | `0x3623c59e84d65ef4d9f91c1a76b877d3b55d3cff7abde20d54beba4851a451fc` |
+| `FeeConfig` | `0xa3c8de12cf5526a1a739cca0fad287e68aac7c39868e51278e71f1cf0a467d19` |
+| `RecordRegistry` | `0xb78de078004318bdccd0776d6ca7933365a527b040264c7aba3496b750dcbe12` |
+| `DoctorRegistry` | `0xeeaab757f02b18b8fc0e1e7211aee676a9ca81391457a9802325d975f627353c` |
+
+### Capability Objects (held by deployer wallet)
+
+| Object | ID |
+|---|---|
+| `RecordAdminCap` | `0x3277b935ffe0557728bf225808a36b5f8dfe9eb029d3dc37a395aa2b96a8f2ed` |
+| `FeeAdminCap` | `0x44969b7ecef28cc471ab0f472b6bc5c6cd090557abe67b34e4c3d210461d9f60` |
+| `DoctorAdminCap` | `0x58949722f40e10b7226d36e141ab035698bf7e10f0fa0c366c244f04a3dc268e` |
+| `AdminCap` (patient_registry) | `0x648c1e92122a51f3a8dd4f19f676fb117a2ef91352a3ba4db55227995b3d32ee` |
+| `EBGAdminCap` | `0xf693c80c8005a9137e9162ae3a43f575aa089ceeff5f160f2b0069fd9928c00b` |
+| `UpgradeCap` | `0xc3aba22e56a75c584bb69afde557c3ae45297d13522fc6bdccbc7bdd8ccf7cf8` |
+
+> **UpgradeCap** — simpan baik-baik. Ini yang dipakai untuk upgrade package di masa depan.
+
+### NestJS `.env`
+
+```env
+SUI_NETWORK=testnet
+SUI_PACKAGE_ID=0x7ea2746330fc5b6457a6f8fd70ace9d81c4db7ba6079c6df4aed309906bd7da8
+
+# Shared Objects
+PATIENT_REGISTRY_ID=0x0c4e045ccf356e6ce8b5f8bcf86d197132a6779b8cb7d4945843d90e9898b851
+FEE_CONFIG_ID=0xa3c8de12cf5526a1a739cca0fad287e68aac7c39868e51278e71f1cf0a467d19
+RECORD_REGISTRY_ID=0xb78de078004318bdccd0776d6ca7933365a527b040264c7aba3496b750dcbe12
+DOCTOR_REGISTRY_ID=0xeeaab757f02b18b8fc0e1e7211aee676a9ca81391457a9802325d975f627353c
+EBG_REGISTRY_ID=0x3623c59e84d65ef4d9f91c1a76b877d3b55d3cff7abde20d54beba4851a451fc
+
+# Admin Caps (deployer wallet only)
+PATIENT_ADMIN_CAP_ID=0x648c1e92122a51f3a8dd4f19f676fb117a2ef91352a3ba4db55227995b3d32ee
+FEE_ADMIN_CAP_ID=0x44969b7ecef28cc471ab0f472b6bc5c6cd090557abe67b34e4c3d210461d9f60
+RECORD_ADMIN_CAP_ID=0x3277b935ffe0557728bf225808a36b5f8dfe9eb029d3dc37a395aa2b96a8f2ed
+DOCTOR_ADMIN_CAP_ID=0x58949722f40e10b7226d36e141ab035698bf7e10f0fa0c366c244f04a3dc268e
+EBG_ADMIN_CAP_ID=0xf693c80c8005a9137e9162ae3a43f575aa089ceeff5f160f2b0069fd9928c00b
 ```
-SUI_PACKAGE_ID=0x...
-PATIENT_REGISTRY_ID=0x...
-FEE_CONFIG_ID=0x...
-RECORD_REGISTRY_ID=0x...
-DOCTOR_REGISTRY_ID=0x...
-EBG_REGISTRY_ID=0x...
-```
+
+Verify on explorer: https://testnet.suivision.xyz/txblock/J1kY8v1iq3wCrgJRKCubvVQJfbbeQuHKqeN3b5b85cN3
 
 ---
 
